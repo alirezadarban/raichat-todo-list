@@ -15,10 +15,7 @@ export class UsersService {
   }
 
   async findUserByusername(username: string): Promise<User | null> {
-    console.log("::::", username)
     const user = await this.userModel.findOne({ username }).exec();
-    console.log("^^^" , user)
-    this.userModel.persist
     return user;
   }
 }

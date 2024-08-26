@@ -1,47 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Types } from 'mongoose';
 // import { TodoListRepository } from '../repositories/todo-list.repository';
-import { TodoSagaRepository } from '../repositories/todo.saga.repository';
-import { CreateTodoListDto } from '../dto/create-todolist.dto';
-import { CreateTodoItemDto } from '../dto/create-todoitem.dto';
+// import { TodoSagaRepository } from '../repositories/todo.saga.repository';
 import { TodoList } from '../schemas/todo-list.schema';
-import { CreateTodoListCommand } from './../commands/impl/create-todo-list.command';
-import { UpdateTodoListCommand } from './../commands/impl/update-todo-list.command';
-import { 
+import { CreateTodoListCommand } from "../commands/impl/create-todo-list.command";
+import { UpdateTodoListCommand } from "../commands/impl/update-todo-list.command";
+import { DeleteTodoListCommand } from "../commands/impl/delete-todo-list.command";
+import { GetTodoListsQuery } from "../queries/impl/get-todo-lists.query";
+import { GetTodoListQuery } from "../queries/impl/get-todo-list.query";
+import {
   CreateTodoListInput,
-  UpdateTodoListInput } from '../interfaces/todo-list.interface'
+  UpdateTodoListInput,
+  DeleteTodoListInput } from '../interfaces/todo-list.interface';
 
 @Injectable()
 export class TodoListsService {
   constructor(
-    private readonly todoListRepository: TodoListRepository,
-    private readonly todoSagaRepository: TodoSagaRepository,
-    private readonly commandBus: CommandBus
+    // private readonly todoListRepository: TodoListRepository,
+    // private readonly todoSagaRepository: TodoSagaRepository,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus
   ) {}
 
   async create(todoList:CreateTodoListInput): Promise<TodoList> {
+    const { userId, title } = todoList;
     return this.commandBus.execute(new CreateTodoListCommand(userId.toString(), title));
   }
 
-  async findAllByUserId(userId: Types.ObjectId): Promise<TodoList[]> {
-    return this.todoListRepository.findAllByUserId(userId);
+  async findAllByUserId(userId: string): Promise<TodoList[]> {
+    // return this.todoListRepository.findAllByUserId(userId);
+    return  await this.queryBus.execute(new GetTodoListsQuery(userId));
   }
 
-  async findById(id: Types.ObjectId): Promise<TodoList> {
-    const todoList = await this.todoListRepository.findById(id);
-    if (!todoList) {
-      throw new NotFoundException('TodoList not found');
-    }
-    return todoList;
+  async findById(id: string): Promise<TodoList> {
+    return  await this.queryBus.execute(new GetTodoListQuery(id));
   }
 
   async update(todoList: UpdateTodoListInput): Promise<TodoList> {
-    // return this.todoListRepository.update(id, updateTodoListDto);
-    return this.commandBus.execute(new UpdateTodoListCommand(todoList));
+    const { id , userId, title } = todoList;
+    return this.commandBus.execute(new UpdateTodoListCommand(id, userId, title));
   }
 
-  async remove(id: Types.ObjectId): Promise<any> {
-    return this.todoListRepository.remove(id);
+  async remove(todoList: DeleteTodoListInput): Promise<any> {
+    const { id , userId } = todoList;
+    return this.commandBus.execute(new DeleteTodoListCommand(id, userId));
   }
 }

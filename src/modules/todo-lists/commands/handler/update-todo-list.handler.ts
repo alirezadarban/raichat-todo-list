@@ -17,9 +17,8 @@ export class UpdateTodoListHandler implements ICommandHandler<UpdateTodoListComm
     if (!todoList) {
       throw new Error('Todo not found');
     }
-
     // Ensure the user owns the todo list
-    if (todoList.userId.toString() !== userId) {
+    if (todoList.userId.toString() !== userId.toString()) {
       throw new Error('Unauthorized');
     }
 

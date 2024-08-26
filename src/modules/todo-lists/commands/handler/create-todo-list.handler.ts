@@ -14,7 +14,8 @@ export class CreateTodoListHandler implements ICommandHandler<CreateTodoListComm
 
   async execute(command: CreateTodoListCommand): Promise<TodoList> {
     const { userId, title } = command;
-    const newTodoList = new this.todoListModel(new Types.ObjectId(userId), { title });
+    const newTodoList =
+      new this.todoListModel({ userId: new Types.ObjectId(userId), title });
     return newTodoList.save();
   }
 }

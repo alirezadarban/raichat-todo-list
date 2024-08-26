@@ -1,8 +1,8 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
-// import { TodoListsModule } from './todo-lists/todo-lists.module';
-// import { TodoItemsModule } from './todo-items/todo-items.module';
+import { TodoListsModule } from './modules/todo-lists/todo-lists.module';
+import { TodoItemsModule } from './modules/todo-items/todo-items.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
@@ -11,8 +11,8 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     MongooseModule.forRoot('mongodb://localhost/todo'),
     UsersModule,
     AuthModule,
-    // TodoListsModule,
-    // TodoItemsModule,
+    TodoListsModule,
+    TodoItemsModule,
   ],
 })
 export class AppModule implements NestModule {
