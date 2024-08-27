@@ -16,8 +16,6 @@ import {
 @Injectable()
 export class TodoItemsService {
   constructor(
-    // private readonly todoItemRepository: TodoItemRepository,
-    // private readonly todoSagaRepository: TodoSagaRepository,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
   ) {}

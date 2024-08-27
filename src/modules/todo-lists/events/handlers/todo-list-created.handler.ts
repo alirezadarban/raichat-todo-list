@@ -16,13 +16,6 @@ export class TodoListCreatedHandler implements IEventHandler<TodoListCreatedEven
 
   async handle(event: TodoListCreatedEvent) {
     const { todoListId , userId} = event;
-    // const todoList = await this.todoListModel.findById(todoListId);
-    //
-    // if (!todoList) {
-    //   throw new Error('Todo list not found');
-    // }
-
-    console.log(">>>>>>> event", event)
 
     await this.userModel.findByIdAndUpdate(
       userId,

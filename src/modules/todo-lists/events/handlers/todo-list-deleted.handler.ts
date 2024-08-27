@@ -16,11 +16,6 @@ export class TodoListDeletedHandler implements IEventHandler<TodoListDeletedEven
 
   async handle(event: TodoListDeletedEvent) {
     const { todoListId, userId } = event;
-    // const todoList = await this.todoListModel.findById(todoListId);
-    //
-    // if (!todoList) {
-    //   throw new Error('Todo list not found');
-    // }
 
     await this.userModel.findByIdAndUpdate(
       userId,

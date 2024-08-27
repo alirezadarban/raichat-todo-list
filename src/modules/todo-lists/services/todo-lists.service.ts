@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Types } from 'mongoose';
-// import { TodoListRepository } from '../repositories/todo-list.repository';
-// import { TodoSagaRepository } from '../repositories/todo.saga.repository';
 import { TodoList } from '../schemas/todo-list.schema';
 import { CreateTodoListCommand } from "../commands/impl/create-todo-list.command";
 import { UpdateTodoListCommand } from "../commands/impl/update-todo-list.command";
@@ -17,8 +14,6 @@ import {
 @Injectable()
 export class TodoListsService {
   constructor(
-    // private readonly todoListRepository: TodoListRepository,
-    // private readonly todoSagaRepository: TodoSagaRepository,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus
   ) {}
