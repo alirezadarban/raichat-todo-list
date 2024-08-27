@@ -1,10 +1,11 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from "@nestjs/cqrs";
 import { CreateTodoItemCommand } from '../impl/create-todo-item.command';
 import { Model, Types } from 'mongoose';
 import { TodoItem, TodoItemDocument } from '../../schemas/todo-item.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { TodoListsService } from "../../../todo-lists/services/todo-lists.service";
 import { NotFoundException } from "@nestjs/common";
+import { TodoItemCreatedEvent } from "../../events/impl/todo-item-created.event";
 
 @CommandHandler(CreateTodoItemCommand)
 export class CreateTodoItemHandler implements ICommandHandler<CreateTodoItemCommand> {
@@ -12,7 +13,8 @@ export class CreateTodoItemHandler implements ICommandHandler<CreateTodoItemComm
     // private readonly todoItemRepository: TodoItemRepository,
     @InjectModel(TodoItem.name)
     private todoItemModel: Model<TodoItemDocument>,
-    private readonly todoListService: TodoListsService
+    private readonly todoListService: TodoListsService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: CreateTodoItemCommand): Promise<TodoItem> {
@@ -39,6 +41,11 @@ export class CreateTodoItemHandler implements ICommandHandler<CreateTodoItemComm
           description,
           priority,
           todoListId: new Types.ObjectId(todoListId)});
-    return newTodoItem.save();
+
+    const todoItem = await newTodoItem.save();
+
+    this.eventBus.publish(new TodoItemCreatedEvent(todoItem.id, todoListId));
+
+    return todoItem;
   }
 }

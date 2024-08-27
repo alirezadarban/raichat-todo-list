@@ -4,7 +4,7 @@ import { UsersModule } from './modules/users/users.module';
 import { TodoListsModule } from './modules/todo-lists/todo-lists.module';
 import { TodoItemsModule } from './modules/todo-items/todo-items.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { LoggerMiddleware } from './middleware/logger.middleware';
+import { AppLoggerMiddleware } from "./middleware/logger.middleware";
 
 @Module({
   imports: [
@@ -17,6 +17,6 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-      consumer.apply(LoggerMiddleware).forRoutes('*');
+      consumer.apply(AppLoggerMiddleware).forRoutes('*');
   }
 }

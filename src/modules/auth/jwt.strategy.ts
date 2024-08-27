@@ -19,6 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new Error('Unauthorized');
     }
-    return { username: user.username, sub: user}; // This will be attached to req.user
+    return { username: user.username, sub: user};
   }
 }

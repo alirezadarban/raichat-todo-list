@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { User } from './../../users/schemas/user.schema'
-// import { TodoItem } from '../../todo-items/schemas/todo-item.schema';
+import { User } from "../../users/schemas/user.schema"
+import { TodoItem } from '../../todo-items/schemas/todo-item.schema';
 
 export type TodoListDocument = TodoList & Document;
 
@@ -16,8 +16,8 @@ export class TodoList {
   @Prop({ required: true })
   title: string;
 
-  // @Prop({ type: [{ type: Types.ObjectId, ref: 'TodoItem' }] })
-  // todoItems: TodoItem[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'TodoItem' }] })
+  todoItems: TodoItem[];
 }
 
 export const TodoListSchema = SchemaFactory.createForClass(TodoList);

@@ -34,7 +34,7 @@ export class TodoListsService {
   }
 
   async findById(id: string): Promise<TodoList> {
-    return  await this.queryBus.execute(new GetTodoListQuery(id));
+    return await this.queryBus.execute(new GetTodoListQuery(id));
   }
 
   async update(todoList: UpdateTodoListInput): Promise<TodoList> {

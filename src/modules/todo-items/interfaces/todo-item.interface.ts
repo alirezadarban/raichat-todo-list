@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export interface CreateTodoItemInput {
     title: string;
     description: string;
@@ -17,5 +15,8 @@ export interface UpdateTodoItemInput {
 
 export interface DeleteTodoItemInput {
     id: string;
-    userId: string;
+}
+
+export interface GetTodoItemInput {
+    id: string;
 }

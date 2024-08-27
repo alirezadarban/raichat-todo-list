@@ -15,7 +15,7 @@ export class GetTodoItemHandler implements IQueryHandler<GetTodoItemQuery> {
     const { id } = query;
     const todoItem = await this.todoItemModel.findById(id).exec();
     if (!todoItem){
-      throw new Error('Todo not found');
+      throw new NotFoundException('Todo not found');
     }
     return todoItem;
   }

@@ -2,7 +2,6 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } f
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { TodoListsService } from '../services/todo-lists.service';
 import { CreateTodoListDto } from '../dtos/create-todo-list.dto';
-// import { CreateTodoItemDto } from '../../todo-items/dtos/create-todo-item.dto';
 import { UpdateTodoListDto } from '../dtos/update-todo-list.dto';
 
 @UseGuards(JwtAuthGuard)

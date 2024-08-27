@@ -20,6 +20,6 @@ import { UsersController } from './controllers/users.controller';
     SignupHandler,
     SigninHandler,
   ],
-  exports: [UsersService],
+  exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}

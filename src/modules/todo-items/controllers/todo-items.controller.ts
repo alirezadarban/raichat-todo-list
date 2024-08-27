@@ -13,18 +13,13 @@ export class TodoItemsController {
   async create(@Request() req,
                @Body() createTodoItemDto: CreateTodoItemDto) {
     const userId = req.user.sub._id;
-    await this.todoItemService.create(createTodoItemDto, userId.toString());
-    return { message: 'TodoItem created successfully' };
-  }
-
-  @Get()
-  async findAll(@Request() req) {
-    return this.todoItemService.findAllByUserId(req.user.sub._id);
+    return await this.todoItemService.create(createTodoItemDto, userId.toString());
+    // return { message: 'TodoItem created successfully' };
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.todoItemService.findById(id);
+    return this.todoItemService.findById({ id });
   }
 
   @Put(':id')
@@ -40,7 +35,7 @@ export class TodoItemsController {
   async remove(@Request() req,
                @Param('id') id: string) {
     const userId = req.user.sub._id;
-    await this.todoItemService.remove({id, userId});
+    await this.todoItemService.remove({ id }, userId.toString());
     return { message: 'Todo deleted successfully' };
   }
 }

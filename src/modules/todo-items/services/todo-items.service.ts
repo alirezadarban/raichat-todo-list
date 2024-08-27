@@ -10,7 +10,8 @@ import { GetTodoItemQuery } from "../queries/impl/get-todo-item.query";
 import {
   CreateTodoItemInput,
   UpdateTodoItemInput,
-  DeleteTodoItemInput } from '../interfaces/todo-item.interface';
+  DeleteTodoItemInput, GetTodoItemInput
+} from "../interfaces/todo-item.interface";
 
 @Injectable()
 export class TodoItemsService {
@@ -37,12 +38,11 @@ export class TodoItemsService {
   }
 
   async findAllByUserId(userId: string): Promise<TodoItem[]> {
-    // return this.todoItemRepository.findAllByUserId(userId);
     return  await this.queryBus.execute(new GetTodoItemsQuery(userId));
   }
 
-  async findById(id: string): Promise<TodoItem> {
-    return  await this.queryBus.execute(new GetTodoItemQuery(id));
+  async findById(todoItemId: GetTodoItemInput): Promise<TodoItem> {
+    return await this.queryBus.execute(new GetTodoItemQuery(todoItemId.id));
   }
 
   async update(todoItem: UpdateTodoItemInput, userId: string): Promise<TodoItem> {
@@ -60,8 +60,7 @@ export class TodoItemsService {
     ));
   }
 
-  async remove(todoItem: DeleteTodoItemInput): Promise<any> {
-    const { id , userId } = todoItem;
-    return this.commandBus.execute(new DeleteTodoItemCommand(id, userId));
+  async remove(todoItemId: DeleteTodoItemInput, userId: string): Promise<any> {
+    return this.commandBus.execute(new DeleteTodoItemCommand(todoItemId.id, userId));
   }
 }
