@@ -3,7 +3,6 @@ import { CommandBus } from "@nestjs/cqrs";
 import { SignupCommand } from "../commands/impl/signup.command";
 import { SigninCommand } from "../commands/impl/singin.command";
 import { JwtAuthGuard } from "src/modules/auth/jwt-auth.guard";
-import { UsersService } from "../services/users.service";
 import { SignupDto } from "../dtos/signup.dto";
 import { SigninDto } from "../dtos/signin.dto";
 
@@ -11,7 +10,6 @@ import { SigninDto } from "../dtos/signin.dto";
 export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly usersService: UsersService
   ){}
 
   @Post('signup')
@@ -26,9 +24,9 @@ export class UsersController {
     return { accessToken: token };
   }
 
-  @Get('profile')  // Route to get user info
-  @UseGuards(JwtAuthGuard)  // Protect the route with JWT AuthGuard
-  async getProfile(@Request() req) {
-    return this.usersService.findUserByusername('Alireza');
-  }
+  // @Get('profile')  // Route to get user info
+  // @UseGuards(JwtAuthGuard)  // Protect the route with JWT AuthGuard
+  // async getProfile(@Request() req) {
+  //   return this.usersService.findUserByusername('Alireza');
+  // }
 }

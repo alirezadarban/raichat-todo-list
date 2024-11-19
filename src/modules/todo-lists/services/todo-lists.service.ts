@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { TodoList } from '../schemas/todo-list.schema';
 import { CreateTodoListCommand } from "../commands/impl/create-todo-list.command";
 import { UpdateTodoListCommand } from "../commands/impl/update-todo-list.command";
 import { DeleteTodoListCommand } from "../commands/impl/delete-todo-list.command";
