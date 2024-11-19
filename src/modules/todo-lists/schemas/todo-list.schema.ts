@@ -7,9 +7,6 @@ export type TodoListDocument = TodoList & Document;
 
 @Schema()
 export class TodoList {
-  @Prop({ type: Types.ObjectId, auto: true })
-  _id: Types.ObjectId;
-
   @Prop({ 
     type: Types.ObjectId, 
     ref: User.name, 

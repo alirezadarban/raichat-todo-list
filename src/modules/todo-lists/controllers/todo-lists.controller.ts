@@ -14,8 +14,11 @@ export class TodoListsController {
                @Body() createTodoListDto: CreateTodoListDto) {
     const { title } = createTodoListDto;
     const userId = req.user.sub._id;
-    await this.todoListService.create({ title, userId });
-    return { message: 'TodoList created successfully' };
+    const todoList = await this.todoListService.create({ title, userId });
+    return { 
+      data: todoList,
+      message: 'TodoList created successfully' 
+    };
   }
 
   @Get()
