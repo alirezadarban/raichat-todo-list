@@ -11,7 +11,15 @@ export class GetUsersHandler implements IQueryHandler<GetUserQuery> {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async execute(query: GetUserQuery): Promise<User[]> {
-    return this.userRepository.find({ relations: ['todoLists'] });
+  async execute(id: GetUserQuery): Promise<User> {
+    const user = await this.userRepository.findOneOrFail(
+      { 
+        where: {
+          id: id.id
+      }, 
+      relations: ['todoLists'] 
+    });
+    delete user.password;
+    return user;
   }
 }

@@ -20,25 +20,21 @@ export class CreateTodoListHandler implements ICommandHandler<CreateTodoListComm
   async execute(command: CreateTodoListCommand): Promise<TodoList> {
     const { userId, title } = command;
 
-    // Find the user by ID
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    // Create a new TodoList entity
     const newTodoList = this.todoListRepository.create({
-      user: userId, // Relation to the User entity
+      user: user,
       title: title,
     });
 
-    // Save the TodoList to the database
     const todoList = await this.todoListRepository.save(newTodoList);
     if (!todoList) {
       throw new InternalServerErrorException('Failed to save the todo list');
     }
 
-    // Publish the event
     this.eventBus.publish(new TodoListCreatedEvent(todoList.id, userId));
 
     return todoList;

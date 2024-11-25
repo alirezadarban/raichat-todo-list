@@ -18,22 +18,20 @@ export class SigninHandler implements ICommandHandler<SigninCommand> {
   async execute(command: SigninCommand): Promise<string> {
     const { username, password } = command;
 
-    // Fetch user directly from the database
     const user = await this.userRepository.findOne({
       where: { username },
     });
+
+    console.log(">>>>..", user)
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new ForbiddenException('Invalid credentials');
     }
 
-    // Create JWT payload
     const payload = {
-      username: user.username,
-      sub: user.id, // Use TypeORM's primary key for `sub`
+      id: user.id
     };
 
-    // Sign and return JWT
     return this.jwtService.sign(payload);
   }
 }

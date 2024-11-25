@@ -1,26 +1,39 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { TodoItemDeletedEvent } from '../impl/todo-item-deleted.event';
-import { TodoList, TodoListDocument } from '../../../todo-lists/schemas/todo-list.schema';
+import { TodoList } from '../../../todo-lists/entities/todo-list.entity';
+import { TodoItem } from '../../entities/todo-item.entity';
 
 @EventsHandler(TodoItemDeletedEvent)
 export class TodoItemDeletedHandler implements IEventHandler<TodoItemDeletedEvent> {
   constructor(
-    @InjectModel(TodoList.name) private readonly todoListModel: Model<TodoListDocument>,
+    @InjectRepository(TodoList)
+    private readonly todoListRepository: Repository<TodoList>,
+    @InjectRepository(TodoItem)
+    private readonly todoItemRepository: Repository<TodoItem>,
   ) {}
 
-  async handle(event: TodoItemDeletedEvent) {
+  async handle(event: TodoItemDeletedEvent): Promise<void> {
     const { todoListId, todoItemId } = event;
-    const todoList = await this.todoListModel.findById(todoListId);
+
+    const todoList = await this.todoListRepository.findOne({
+      where: { id: todoListId },
+      relations: ['todoItems'],
+    });
 
     if (!todoList) {
       throw new Error('Todo list not found');
     }
 
-    await this.todoListModel.findByIdAndUpdate(
-      todoListId,
-      { $pull: { todoItems: todoItemId },
-      })
+    const todoItemIndex = todoList.todoItems.findIndex((item) => item.id === todoItemId);
+    if (todoItemIndex !== -1) {
+      todoList.todoItems.splice(todoItemIndex, 1);
+      await this.todoListRepository.save(todoList);
+    } else {
+      throw new Error('Todo item not found in the list');
+    }
+
+    await this.todoItemRepository.delete(todoItemId);
   }
 }

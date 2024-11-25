@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Types } from 'mongoose';
-import { TodoItem } from '../schemas/todo-item.schema';
 import { CreateTodoItemCommand } from "../commands/impl/create-todo-item.command";
 import { UpdateTodoItemCommand } from "../commands/impl/update-todo-item.command";
 import { DeleteTodoItemCommand } from "../commands/impl/delete-todo-item.command";
@@ -12,6 +10,7 @@ import {
   UpdateTodoItemInput,
   DeleteTodoItemInput, GetTodoItemInput
 } from "../interfaces/todo-item.interface";
+import { TodoItem } from '../entities/todo-item.entity';
 
 @Injectable()
 export class TodoItemsService {

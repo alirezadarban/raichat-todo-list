@@ -1,40 +1,41 @@
-import { CommandHandler, EventBus, ICommandHandler } from "@nestjs/cqrs";
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { TodoItem, TodoItemDocument } from '../../schemas/todo-item.schema';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTodoItemCommand } from '../impl/delete-todo-item.command';
-import { NotFoundException } from "@nestjs/common";
-import { TodoListsService } from "../../../todo-lists/services/todo-lists.service";
-import { TodoItemDeletedEvent } from "../../events/impl/todo-item-deleted.event";
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { TodoListsService } from '../../../todo-lists/services/todo-lists.service';
+import { TodoItemDeletedEvent } from '../../events/impl/todo-item-deleted.event';
+import { TodoItem } from '../../entities/todo-item.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @CommandHandler(DeleteTodoItemCommand)
 export class DeleteTodoItemHandler implements ICommandHandler<DeleteTodoItemCommand> {
   constructor(
-    @InjectModel(TodoItem.name)
-    private readonly todoItemModel: Model<TodoItemDocument>,
     private readonly todoListService: TodoListsService,
     private readonly eventBus: EventBus,
+    @InjectRepository(TodoItem)
+    private readonly todoItemRepository: Repository<TodoItem>,
   ) {}
 
   async execute(command: DeleteTodoItemCommand): Promise<TodoItem> {
     const { id, userId } = command;
-    const todoItem = await this.todoItemModel.findById(id);
+
+    const todoItem = await this.todoItemRepository.findOne({
+      where: { id },
+      relations: ['todoList'],
+    });
+
     if (!todoItem) {
-      throw new Error('Todo not found');
+      throw new NotFoundException('Todo item not found');
     }
 
-    const todoList = await this.todoListService.findById(todoItem.todoListId.toString());
+    const todoList = await this.todoListService.findById(todoItem.todoList.id);
     if (!todoList) {
       throw new NotFoundException('Todo list not found');
     }
 
-    if (todoList.userId.toString() !== userId) {
-      throw new Error('Unauthorized');
-    }
+    await this.todoItemRepository.delete(id);
 
-    await this.todoItemModel.findByIdAndDelete(id);
-
-    this.eventBus.publish(new TodoItemDeletedEvent(todoItem.id, todoItem.todoListId.toString()));
+    this.eventBus.publish(new TodoItemDeletedEvent(todoItem.id, todoItem.todoList.id));
 
     return todoItem;
   }

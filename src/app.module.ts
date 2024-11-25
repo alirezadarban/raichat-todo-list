@@ -16,8 +16,8 @@ import { User } from './modules/users/entities/user.entity';
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT, 10) || 5432,
       username: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'todo_list_app',
+      password: process.env.DB_PASSWORD || 'pass123',
+      database: process.env.DB_NAME || 'postgres',
       autoLoadEntities: true,
       synchronize: true
     }),

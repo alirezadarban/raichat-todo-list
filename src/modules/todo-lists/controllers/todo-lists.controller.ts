@@ -13,17 +13,12 @@ export class TodoListsController {
   async create(@Request() req,
                @Body() createTodoListDto: CreateTodoListDto) {
     const { title } = createTodoListDto;
-    const userId = req.user.sub._id;
+    const userId = req.user.id;
     const todoList = await this.todoListService.create({ title, userId });
     return { 
       data: todoList,
       message: 'TodoList created successfully' 
     };
-  }
-
-  @Get()
-  async findAll(@Request() req) {
-    return this.todoListService.findAllByUserId(req.user.sub._id);
   }
 
   @Get(':id')
@@ -35,7 +30,7 @@ export class TodoListsController {
   async update(@Request() req,
                @Param('id') id: string,
                @Body() updateTodoListDto: UpdateTodoListDto) {
-    const userId = req.user.sub._id;
+    const userId = req.user.id;
     const { title } = updateTodoListDto;
     await this.todoListService.update({id, userId, title});
     return { message: 'TodoList updated successfully' };
@@ -44,7 +39,7 @@ export class TodoListsController {
   @Delete(':id')
   async remove(@Request() req,
                @Param('id') id: string) {
-    const userId = req.user.sub._id;
+    const userId = req.user.id;
     await this.todoListService.remove({id, userId});
     return { message: 'Todo deleted successfully' };
   }

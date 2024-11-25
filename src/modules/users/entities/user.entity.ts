@@ -10,7 +10,7 @@ import {
   @Entity()
   export class User {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
   
     @Column({ unique: true })
     username: string;
@@ -18,8 +18,11 @@ import {
     @Column()
     password: string;
   
-    @ManyToMany(() => TodoList, (todoList) => todoList.user, { cascade: true })
     @JoinTable()
+    @ManyToMany(
+      type => TodoList, 
+      (todoList) => todoList.user, 
+      { cascade: true })
     todoLists: TodoList[];
   }
   

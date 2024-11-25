@@ -16,16 +16,13 @@ export class SignupHandler implements ICommandHandler<SignupCommand> {
   async execute(command: SignupCommand): Promise<void> {
     const { username, password } = command;
 
-    // Check if the username already exists
     const existingUser = await this.userRepository.findOne({ where: { username } });
     if (existingUser) {
       throw new ConflictException('Username already exists');
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create and save the new user
     const user = this.userRepository.create({
       username,
       password: hashedPassword,

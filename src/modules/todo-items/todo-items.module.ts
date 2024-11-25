@@ -10,11 +10,16 @@ import { DeleteTodoItemHandler } from './commands/handler/delete-todo-item.handl
 import { TodoListsModule } from "../todo-lists/todo-lists.module";
 import { TodoItemCreatedHandler } from './events/handlers/todo-item-created.handler';
 import { TodoItemDeletedHandler } from './events/handlers/todo-item-deleted.handler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TodoItem } from './entities/todo-item.entity';
+import { TodoList } from "../todo-lists/entities/todo-list.entity";
 
 @Module({
   imports: [
     CqrsModule,
-    forwardRef(() => TodoListsModule)
+    forwardRef(() => TodoListsModule),
+    TypeOrmModule.forFeature([TodoItem, TodoList]),
+
   ],
   controllers: [TodoItemsController],
   providers: [
@@ -25,7 +30,7 @@ import { TodoItemDeletedHandler } from './events/handlers/todo-item-deleted.hand
     GetTodoItemHandler,
     DeleteTodoItemHandler,
     TodoItemCreatedHandler,
-    TodoItemDeletedHandler,
+    TodoItemDeletedHandler
   ]
 })
 export class TodoItemsModule {}

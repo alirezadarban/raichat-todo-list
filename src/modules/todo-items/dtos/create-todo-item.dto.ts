@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Min, Max } from "class-validator";
 
 export class CreateTodoItemDto {
   @IsNotEmpty()
@@ -11,6 +11,8 @@ export class CreateTodoItemDto {
 
   @IsOptional()
   @IsNumber()
+  @Min(0)
+  @Max(5)
   readonly priority: number;
 
   @IsNotEmpty()

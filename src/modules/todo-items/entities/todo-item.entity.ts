@@ -8,8 +8,8 @@ import {
   
   @Entity()
   export class TodoItem {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
   
     @ManyToOne(() => TodoList, (todoList) => todoList.todoItems, { onDelete: 'CASCADE' })
     todoList: TodoList;

@@ -9,6 +9,7 @@ import {
   CreateTodoListInput,
   UpdateTodoListInput,
   DeleteTodoListInput } from '../interfaces/todo-list.interface';
+import { TodoList } from '../entities/todo-list.entity';
 
 @Injectable()
 export class TodoListsService {

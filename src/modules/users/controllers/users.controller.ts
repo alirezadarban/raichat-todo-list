@@ -5,28 +5,30 @@ import { SigninCommand } from "../commands/impl/singin.command";
 import { JwtAuthGuard } from "src/modules/auth/jwt-auth.guard";
 import { SignupDto } from "../dtos/signup.dto";
 import { SigninDto } from "../dtos/signin.dto";
+import { UsersService } from "../services/users.service"
 
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly commandBus: CommandBus,
+    private readonly usersService: UsersService
   ){}
 
   @Post('signup')
   async signup(@Body() signupDto: SignupDto) {
-    await this.commandBus.execute(new SignupCommand(signupDto.username, signupDto.password));
+    await this.usersService.signup(signupDto);
     return { message: 'User registered successfully' };
   }
 
   @Post('signin')
   async signin(@Body() signinDto: SigninDto) {
-    const token = await this.commandBus.execute(new SigninCommand(signinDto.username, signinDto.password));
+    const token = await this.usersService.signin(signinDto);
     return { accessToken: token };
   }
 
-  // @Get('profile')  // Route to get user info
-  // @UseGuards(JwtAuthGuard)  // Protect the route with JWT AuthGuard
-  // async getProfile(@Request() req) {
-  //   return this.usersService.findUserByusername('Alireza');
-  // }
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Request() req: any) {
+    const id = req.user.id;
+    return this.usersService.profile(id);
+  }
 }

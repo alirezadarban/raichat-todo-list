@@ -10,10 +10,13 @@ import {
   
   @Entity()
   export class TodoList {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
   
-    @ManyToOne(() => User, (user) => user.todoLists, { onDelete: 'CASCADE' })
+    @ManyToOne(
+      type => User, 
+      (user) => user.todoLists,
+      { onDelete: 'CASCADE' })
     user: User;
   
     @Column()

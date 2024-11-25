@@ -1,28 +1,39 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from "mongoose";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { TodoListDeletedEvent } from '../impl/todo-list-deleted.event';
-import { TodoItem, TodoItemDocument } from "../../../todo-items/schemas/todo-item.schema";
-import { User, UserDocument } from "../../../users/schemas/user.schema";
+import { TodoList } from '../../entities/todo-list.entity';
+import { User } from '../../../users/entities/user.entity';
 
 @EventsHandler(TodoListDeletedEvent)
 export class TodoListDeletedHandler implements IEventHandler<TodoListDeletedEvent> {
   constructor(
-    @InjectModel(TodoItem.name)
-    private readonly todoItemModel: Model<TodoItemDocument>,
-    @InjectModel(User.name)
-    private readonly userModel: Model<UserDocument>,
+    @InjectRepository(TodoList)
+    private readonly todoListRepository: Repository<TodoList>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
-  async handle(event: TodoListDeletedEvent) {
+  async handle(event: TodoListDeletedEvent): Promise<void> {
     const { todoListId, userId } = event;
 
-    await this.userModel.findByIdAndUpdate(
-      userId,
-      { $pull: { todoLists: todoListId },
-      });
+    const user = await this.userRepository.findOne({
+      where: { id: todoListId },
+      relations: ['todoLists'],
+    });
 
-    await this.todoItemModel.deleteMany({todoListId: new Types.ObjectId(todoListId)});
+    if (!user) {
+      throw new Error('User not found');
+    }
 
+    const todoListIndex = user.todoLists.findIndex((item) => item.id === todoListId);
+    if (todoListIndex !== -1) {
+      user.todoLists.splice(todoListIndex, 1);
+      await this.todoListRepository.save(user);
+    } else {
+      throw new Error('Todo item not found in the list');
+    }
+
+    await this.todoListRepository.delete(todoListId);
   }
 }
